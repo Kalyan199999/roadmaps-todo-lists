@@ -2,8 +2,6 @@ const jwt = require("jsonwebtoken")
 
 const verification = (req,res,next)=>
 {
-    console.log("Verification");
-    
     try 
     {
         // get the secrete key

@@ -36,7 +36,7 @@ const register = async (req,res)=>
     {
         const { name , email , password } = req.body;
 
-        if( isEmpty(name) || isEmpty(email) || isEmpty(password) ) 
+        if( !isEmpty(name) || !isEmpty(email) || !isEmpty(password) ) 
         {
             return res.status(400).json({
                 ok:false,
@@ -63,29 +63,32 @@ const register = async (req,res)=>
         const salt = process.env.SALT | 10;
 
         const hashPassword = await bcrypt.hash( password , salt );
-
-        const SECRETE_KEY = process.env.SECRETE_KEY;
-
-        const payload = {
-            email:email,
-            password:password
-        }
-
-        const options = {expiresIn:'1h'};
-
-        const token = jwt.sign( payload ,secretOrPrivateKey=SECRETE_KEY, options )
-
+ 
         const newUser = User({
             username:name,
             email:email,
             password:hashPassword,
         })
-
         await newUser.save()
+
+         const SECRETE_KEY = process.env.SECRETE_KEY;
+
+        const payload = {
+            email:email,
+            id:newUser._id
+        }
+
+        const options = {expiresIn:'1h'};
+        
+        const token = jwt.sign( payload ,secretOrPrivateKey=SECRETE_KEY, options )
         
         return res.status(200).json({
             ok:true,
-            user:newUser,
+            user:{
+                id:newUser._id,
+                name:newUser.username,
+                email:newUser.email
+            },
             token,
             
         })
@@ -105,7 +108,7 @@ const login = async (req,res)=>
     {
         const {email,password} = req.body;
 
-        if( isEmpty(email) || isEmpty(password) )
+        if( !isEmpty(email) || !isEmpty(password) )
         {
             return res.status(200).json({
                 ok:false,
@@ -149,7 +152,7 @@ const login = async (req,res)=>
 
         const payload = {
             email:email,
-            password:password
+            id:user._id
         }
 
         const options = {expiresIn:'1h'};
@@ -160,6 +163,7 @@ const login = async (req,res)=>
             {
                 ok:true,
                 user:{
+                    id:user._id,
                     name:user.username,
                     email:user.email
                 },

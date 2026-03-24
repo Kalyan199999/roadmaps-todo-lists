@@ -1,6 +1,6 @@
 const isEmpty = ( s )=>
 {
-    return !s.trim();
+    return s.trim();
 }
 
 const isValidEmail = (email)=>
