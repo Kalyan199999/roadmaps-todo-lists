@@ -120,8 +120,45 @@ const getItemById = async (req,res)=>
     }
 }
 
+// update the items
+const update = async (req,res)=>
+{
+    try
+    {
+        const { id } = req.params;
+
+        const { title , description } = req.body;
+        
+        const updated = await ToDoItem.findByIdAndUpdate(   id , 
+                                                            { title:title , description:description } , 
+                                                            { returnDocument: 'after' }
+                                                        )
+
+        if( !updated )
+        {
+            return res.status(200).json({
+                ok:true,
+                message:"Item not found,may be invalid item id"
+            })
+        }
+
+        return res.status(200).json({
+            ok:true,
+            data:updated
+        })
+    }
+    catch(error)
+    {
+        return res.status(500).json({
+            ok:false,
+            message:error.message
+        })
+    }
+}
+
 module.exports = {
     getAll,
     additem,
-    getItemById
+    getItemById,
+    update
 }
