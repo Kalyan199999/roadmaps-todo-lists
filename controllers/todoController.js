@@ -9,7 +9,18 @@ const getAll = async ( req,res )=>
 {
     try 
     {
-        const data = await ToDoItem.find({})
+        const { id } = req.user;
+
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 2;
+
+        // No.of items to skip
+        const offset = page > 0 ? (page-1)*limit : 0 ;
+        
+        const data = await ToDoItem.find({userId:id})
+                                    .sort({updatedAt:-1})  // sorted in descending order
+                                    .skip(offset)
+                                    .limit(limit)
 
         return res.status(200).json({
             ok:true,

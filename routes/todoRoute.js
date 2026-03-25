@@ -10,7 +10,7 @@ const {
 
 const route = express.Router()
 
-route.get('/' , getAll);
+route.get('/',Verification , getAll);
 
 route.post('/add' , Verification , additem )
 
