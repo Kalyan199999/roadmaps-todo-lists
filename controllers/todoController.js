@@ -22,9 +22,14 @@ const getAll = async ( req,res )=>
                                     .skip(offset)
                                     .limit(limit)
 
+        const total = await ToDoItem.countDocuments( { userId:id } )
+
         return res.status(200).json({
             ok:true,
-            data:data
+            count:total,
+            page:page,
+            limit:limit,
+            data:data,
         })
     } 
     catch (error) 
@@ -156,9 +161,44 @@ const update = async (req,res)=>
     }
 }
 
+const remove = async (req, res) => 
+{
+    try 
+    {
+        const { id } = req.params;
+
+        const item = await ToDoItem.findByIdAndDelete(id);
+
+        if (!item) 
+        {
+            
+            return res.status(404).json({
+                ok: false, 
+                message: "Item not found. It may have already been deleted or the ID is invalid."
+            });
+        }
+        
+        return res.status(200).json({
+            ok: true,
+            message: "Item deleted successfully",
+            data: item
+        });
+        
+    } 
+    catch (error) 
+    {
+        
+        return res.status(500).json({
+            ok: false,
+            message: error.message
+        });
+    }
+}
+
 module.exports = {
     getAll,
     additem,
     getItemById,
-    update
+    update,
+    remove
 }

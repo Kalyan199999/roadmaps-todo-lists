@@ -6,7 +6,8 @@ const {
     getAll,
     additem,
     getItemById,
-    update
+    update,
+    remove
 } = require('../controllers/todoController')
 
 const route = express.Router()
@@ -17,6 +18,8 @@ route.post('/add' , Verification , additem )
 
 route.get('/:id' , Verification , getItemById)
 
-route.patch('/update/:id' , update)
+route.patch('/update/:id' , Verification , update)
+
+route.delete('/delete/:id' , Verification , remove )
 
 module.exports = route;
